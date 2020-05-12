@@ -2,8 +2,8 @@
 > A PowerShell wrapper module for Apache Log4Net
 
 [![AppVeyor Build][appv-b-img]][appv-url]
-[![PSG Version][psg-v-img]][psg-url]]
-[![PSG Downloads][psg-dt-img]][psg-url]]
+[![PSG Version][psg-v-img]][psg-url]
+[![PSG Downloads][psg-dt-img]][psg-url]
 
 From the Apache log4net Project Page:
 
