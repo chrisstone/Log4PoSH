@@ -1,6 +1,6 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.38 2020-05-08T18:57:43.459Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.45 2020-06-10T16:29:28.414Z
 
-function Initialize-Log4PoSH {
+function Init-Logger {
 Param (
 	[string] $DllPath = $PSScriptRoot + "\..\lib\$($PSVersionTable.CLRVersion.ToString(2))\log4net.dll"
 )
@@ -15,29 +15,34 @@ Param (
 	[log4net.LogManager]::ResetConfiguration();
 }
 
-function Reset-Log4PoSH {
+function Reset-Logger {
 	[log4net.LogManager]::ResetConfiguration();
 }
 
 
-function New-Log4PoSH {
+function New-Logger {
 Param (
 	$Name = 'root'
 )
+	If ($null -eq ([System.AppDomain]::CurrentDomain.GetAssemblies() |? {(($_.FullName -split ',')[0] -match 'log4net')})) { Init-Logger }
 	return [log4net.LogManager]::GetLogger($Name);
 }
 
-function Get-Log4PoSH {
+function Get-Logger {
 Param (
-	$Name = 'root'
+	$Name = 'root',
+	[switch] $All
 )
-	return [log4net.LogManager]::Exists($Name);
+	If ($null -eq ([System.AppDomain]::CurrentDomain.GetAssemblies() |? {(($_.FullName -split ',')[0] -match 'log4net')})) { Init-Logger }
+	If ($All.IsPresent()) {
+		return [log4net.LogManager]::GetCurrentLoggers()
+	} else {
+		return [log4net.LogManager]::Exists($Name);
+	}
 }
 
-function Get-L4pLoggers {
-	return [log4net.LogManager]::GetCurrentLoggers()
-}
-
-function Clear-Log4PoSHBuffer {
+function Clear-LoggerBuffer {
 	Return !([log4net.LogManager]::Flush())
 }
+
+Export-ModuleMember -Function Init-Logger, Reset-Logger, New-Logger, Get-Logger, Clear-LoggerBuffer

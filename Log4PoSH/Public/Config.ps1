@@ -1,11 +1,11 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.1 2020-05-06T12:32:55.114Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.2 2020-06-10T16:36:39.398Z
 
 
-function Import-L4pBasicConfig {
+function Import-BasicConfig {
 	[log4net.Config.BasicConfigurator]::Configure();
 }
 
-function Import-L4pXmlConfig {
+function Import-XmlConfig {
 Param(
 	[Parameter(Position=0,Mandatory=$true,ParameterSetName='Xml')]
 	[xml] $Xml,
@@ -17,3 +17,5 @@ Param(
 		'Path'	{ [log4net.Config.XmlConfigurator]::Configure($Path -as [System.IO.FileInfo]); Break }
 	}
 }
+
+Export-ModuleMember -Function Import-BasicConfig, Import-XmlConfig
