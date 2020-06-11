@@ -1,45 +1,32 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.10 2020-06-11T15:02:07.088Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.26 2020-06-11T15:56:18.569Z
 # Based on https://github.com/RamblingCookieMonster/PSDeploy
-
-function Get-CurrentFileName {
-	If ($MyInvocation.CommandOrigin -eq 0) {
-		Return $MyInvocation.CommandOrigin
-	} else {
-		Return $MyInvocation.MyCommand.Name
-	}
-};
 
 function Resolve-Module {
 [Cmdletbinding()]
-param
-(
+Param (
     [Parameter(Mandatory)]
     [string[]]$Name
 )
 
 Process {
     Foreach ($ModuleName in $Name) {
+		Write-Host "Resolving Module $($ModuleName)"
         $Module = Get-Module -Name $ModuleName -ListAvailable
-        Write-Host "Resolving Module $($ModuleName)"
 
         If ($Module) {
             $Version = $Module | Measure-Object -Property Version -Maximum | Select-Object -ExpandProperty Maximum
             $GalleryVersion = Find-Module -Name $ModuleName -Repository PSGallery | Measure-Object -Property Version -Maximum | Select-Object -ExpandProperty Maximum
 
             If ($Version -lt $GalleryVersion) {
-
-                If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
-
-                Write-Host "$($ModuleName) Installed Version [$($Version.tostring())] is outdated. Installing Gallery Version [$($GalleryVersion.tostring())]"
-
+                Write-Host "`tOutdated, Version [$($Version.tostring())] is installed. Updating to Gallery Version [$($GalleryVersion.tostring())]"
                 Install-Module -Name $ModuleName -Force
                 Import-Module -Name $ModuleName -Force -RequiredVersion $GalleryVersion
             } else {
-                Write-Host "Module Installed, Importing $($ModuleName)"
+                Write-Host "`tInstalled, Importing $($ModuleName)"
                 Import-Module -Name $ModuleName -Force -RequiredVersion $Version
             }
         } else {
-            Write-Host "$($ModuleName) Missing, installing Module"
+            Write-Host "`tMissing, installing Module"
             Install-Module -Name $ModuleName -Force
             Import-Module -Name $ModuleName -Force -RequiredVersion $Version
         }
@@ -47,15 +34,16 @@ Process {
 }
 }
 
-Write-Host ("$(Get-CurrentFileName) Started ").PadRight(80,'-')
-
-# Grab nuget bits, install modules, set build variables, start build.
+# Grab nuget bits, PSGallery, install modules
 Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
-
+If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
 Resolve-Module -Name Psake, PSDeploy, Pester, BuildHelpers
 
 # From BuildHelpers
 Set-BuildEnvironment -Force
 
-Invoke-psake "$env:BHProjectPath\psake.ps1"
+# Go for a deployment in CI system
+If ($env:BHBuildSystem -ne 'Unknown') { $BuildOpts = @{ taskList = 'Deploy' } }
+
+Invoke-psake -buildFile "$env:BHProjectPath\psake.ps1" @BuildOpts
 exit ( [int]( -not $psake.build_success ) )

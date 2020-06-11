@@ -67,14 +67,20 @@ Task Build -Depends Test {
     Set-ModuleFunction
 
     # Bump the module version; from BuildHelpers
-    Update-Metadata -Path $env:BHPSModuleManifest
+	Update-Metadata -Path $env:BHPSModuleManifest
+	If ($env:BHBranchName -eq 'master') {
+		Set-Content -Path $env:BHPSModuleManifest -Value (Get-Content -Path $env:BHPSModuleManifest | Select-String -Pattern 'Prerelease' -NotMatch)
+	} else {
+		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value ($env:BHCommitHash).Substring(0,7)
+	}
+
 }
 
 Task Deploy -Depends Build {
     $lines
 
     $Params = @{
-        Path = "$ProjectRoot\Build"
+        Path = "$ProjectRoot"
         Force = $true
         Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
     }
