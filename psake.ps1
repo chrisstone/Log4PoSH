@@ -63,15 +63,18 @@ Task Test -Depends Init  {
 Task Build -Depends Test {
     $lines
 
-    # Load the module, read the exported functions, update the psd1 FunctionsToExport; from BuildHelpers
+	# Load, read, update the psd1 FunctionsToExport, AliasesToExport; from BuildHelpers
+	Write-Host "Updating Functions"
     Set-ModuleFunction
 
-    # Bump the module version; from BuildHelpers
-	Update-Metadata -Path $env:BHPSModuleManifest
+	Write-Host "Updating Aliases"
+	Set-ModuleAlias
+
+    # Set the Prerelease string, or remove
 	If ($env:BHBranchName -eq 'master') {
 		Set-Content -Path $env:BHPSModuleManifest -Value (Get-Content -Path $env:BHPSModuleManifest | Select-String -Pattern 'Prerelease' -NotMatch)
 	} else {
-		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value ($env:BHCommitHash).Substring(0,7)
+		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value "Pre$(($env:BHCommitHash).Substring(0,7))"
 	}
 
 }
@@ -84,5 +87,6 @@ Task Deploy -Depends Build {
         Force = $true
         Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
     }
+	Write-Host "Invoking PSDeploy"
     Invoke-PSDeploy @Verbose @Params
 }

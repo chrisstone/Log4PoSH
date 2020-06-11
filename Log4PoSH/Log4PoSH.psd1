@@ -9,7 +9,7 @@
 @{
 
 	RootModule = 'Log4PoSH.psm1'
-	ModuleVersion = '0.0.3'
+	ModuleVersion = '0.1.3'
 
 	GUID = 'c9899721-389d-4870-8459-9ec8e551a824'
 	Author = 'Chris Stone <Chris@StoneyForest.net>'
@@ -22,7 +22,7 @@
 	FunctionsToExport = '*'
 	CmdletsToExport = @()
 	VariablesToExport = '*'
-	AliasesToExport = @()
+	AliasesToExport = '*'
 
 	PrivateData = @{
 	    PSData = @{
