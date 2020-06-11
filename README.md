@@ -12,15 +12,15 @@ From the Apache log4net Project Page:
 ## Installation
 
 ```powershell
-Install-Module -Name
+Install-Module -Name Log4PoSH
 ```
 
 ## Quick Start
 
 ```powershell
 Load-Module -Name Log4PoSH
-Import-L4pBasicConfig
-$Log = New-Log4PoSH
+Import-BasicConfig
+$Log = New-Logger
 $Log.Debug("Hello World")
 
 ```
