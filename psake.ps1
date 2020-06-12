@@ -1,4 +1,4 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.4 2020-06-12T13:09:39.809Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.8 2020-06-12T14:11:52.227Z
 # PSake makes variables declared here available in other scriptblocks
 # Init some things
 Properties {
@@ -74,6 +74,10 @@ Task Build -Depends Test {
 	} else {
 		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value "PRE$(($env:BHCommitHash).Substring(0,7))"
 	}
+
+	[Version] $Ver = Get-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion'
+	$Ver.Build = $Env:BHBuildNumber
+	Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value $Ver.ToString()
 
 }
 
