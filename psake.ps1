@@ -1,4 +1,4 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.8 2020-06-12T14:11:52.227Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.9 2020-06-12T14:16:25.480Z
 # PSake makes variables declared here available in other scriptblocks
 # Init some things
 Properties {
@@ -76,8 +76,7 @@ Task Build -Depends Test {
 	}
 
 	[Version] $Ver = Get-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion'
-	$Ver.Build = $Env:BHBuildNumber
-	Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value $Ver.ToString()
+	Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value (@($Ver.Major,$Ver.Minor,$Env:BHBuildNumber) -join '.')
 
 }
 
