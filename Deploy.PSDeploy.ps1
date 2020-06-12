@@ -16,8 +16,7 @@
 # Publish to gallery with a few restrictions
 If ($env:BHPSModulePath -and
     $env:BHBuildSystem -ne 'Unknown' -and
-    $env:BHBranchName -eq "master" -and
-    $env:BHCommitMessage -match '!deploy') {
+    @('master','devel') -contains $env:BHBranchName) {
     Deploy Module {
         By PSGalleryModule {
             FromSource $ENV:BHPSModulePath
@@ -30,8 +29,7 @@ If ($env:BHPSModulePath -and
 } Else {
     "Skipping deployment: To deploy, ensure that...`n" +
     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-    "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
-    "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)" |
+    "`t* You are committing to the master/devel branch (Current: $ENV:BHBranchName) `n" |
         Write-Host
 }
 
