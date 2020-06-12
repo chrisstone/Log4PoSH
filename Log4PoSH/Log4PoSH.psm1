@@ -1,4 +1,4 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.6 2020-06-10T16:30:08.629Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.11 2020-06-11T19:49:45.093Z
 <#
 .SYNOPSIS
     Powershell Log4Net Wrapper Module
@@ -7,5 +7,6 @@
 
 $ModuleHome = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
-. "$ModuleHome\Public\Core.ps1"
-. "$ModuleHome\Public\Config.ps1"
+Foreach ($ModFile in (Get-ChildItem -Filter '*.ps1' -Path "$ModuleHome\Public")) {
+	. $($ModFile.FullName)
+}

@@ -42,7 +42,7 @@
 	        # ReleaseNotes of this module
 	        # ReleaseNotes = ''
 
-			Prerelease = 'asdf'
+			Prerelease = 'AutoPopulated'
 	    } # End of PSData hashtable
 	}
 }

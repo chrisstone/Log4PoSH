@@ -14,10 +14,10 @@ Properties {
     $lines = '----------------------------------------------------------------------'
 
     $Verbose = @{}
-    if($ENV:BHCommitMessage -match "!verbose")
-    {
+    # if($ENV:BHCommitMessage -match "!verbose")
+    #{
         $Verbose = @{Verbose = $True}
-    }
+    #}
 }
 
 Task Default -Depends Test
@@ -35,9 +35,7 @@ Task Test -Depends Init  {
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
     # Testing links on github requires >= tls 1.2
-    $SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
     # Gather test results. Store them in a variable and file
     $TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
     [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocol
@@ -70,11 +68,12 @@ Task Build -Depends Test {
 	Write-Host "Updating Aliases"
 	Set-ModuleAlias
 
+	Write-Host "Updating Prerelease Metadata"
     # Set the Prerelease string, or remove
 	If ($env:BHBranchName -eq 'master') {
 		Set-Content -Path $env:BHPSModuleManifest -Value (Get-Content -Path $env:BHPSModuleManifest | Select-String -Pattern 'Prerelease' -NotMatch)
 	} else {
-		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value "Pre$(($env:BHCommitHash).Substring(0,7))"
+		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value "PRE$(($env:BHCommitHash).Substring(0,7))"
 	}
 
 }

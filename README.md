@@ -15,11 +15,13 @@ From the Apache log4net Project Page:
 Install-Module -Name Log4PoSH
 ```
 
+Use `-AllowPrerelease` to install 'devel' versions (expect bugs).
+
 ## Quick Start
 
 ```powershell
-Load-Module -Name Log4PoSH
-Import-BasicConfig
+Import-Module -Name Log4PoSH
+Import-LoggerConfig -Basic
 $Log = New-Logger
 $Log.Debug("Hello World")
 
@@ -27,8 +29,8 @@ $Log.Debug("Hello World")
 
 ## Release History
 
-* 0.0.1
-    * Work in progress
+* 0.1.x
+    * Work in Progress - Keep your expectations low, very low
 
 
 ## Documentation
@@ -39,12 +41,17 @@ TODO Documentation
 ## Contributing
 
 1. Fork it (<https://github.com/yourname/yourproject/fork>)
-2. Create your feature branch (`git checkout -b feature/fooBar`)
+2. Create your branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
 
+Branches
 
+ - master - Stable releases, CI pushes to PSGallery
+ - devel - Prereleaes, CI pushes to PSGallery, must pass testing
+ - feature/* - Feature development, no CI, voluntary testing
+ - issue/* - Fixes for reported issues, no CI, voluntary testing
 
 <!-- Defines -->
 [appv-b-img]:	https://img.shields.io/appveyor/build/chrisstone/Log4PoSH.svg
