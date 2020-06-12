@@ -1,19 +1,19 @@
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.4 2020-06-12T13:09:39.809Z
 # PSake makes variables declared here available in other scriptblocks
 # Init some things
 Properties {
     # Find the build folder based on build system
-        $ProjectRoot = $ENV:BHProjectPath
-        if(-not $ProjectRoot)
-        {
-            $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
-        }
+    $ProjectRoot = $ENV:BHProjectPath
+    If (-not $ProjectRoot) {
+        $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
+    }
 
     $Timestamp = Get-Date -UFormat "%Y%m%d-%H%M%S"
     $PSVersion = $PSVersionTable.PSVersion.Major
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
     $lines = '----------------------------------------------------------------------'
 
-    $Verbose = @{}
+    #$Verbose = @{}
     # if($ENV:BHCommitMessage -match "!verbose")
     #{
         $Verbose = @{Verbose = $True}
@@ -38,7 +38,6 @@ Task Test -Depends Init  {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     # Gather test results. Store them in a variable and file
     $TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
-    [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocol
 
     # In Appveyor?  Upload our tests! #Abstract this into a function?
     If($ENV:BHBuildSystem -eq 'AppVeyor')

@@ -1,11 +1,11 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.26 2020-06-11T15:56:18.569Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.30 2020-06-12T13:06:21.016Z
 # Based on https://github.com/RamblingCookieMonster/PSDeploy
 
 function Resolve-Module {
 [Cmdletbinding()]
 Param (
     [Parameter(Mandatory)]
-    [string[]]$Name
+    [string[]]	$Name
 )
 
 Process {
@@ -45,5 +45,6 @@ Set-BuildEnvironment -Force
 # Go for a deployment in CI system
 If ($env:BHBuildSystem -ne 'Unknown') { $BuildOpts = @{ taskList = 'Deploy' } }
 
-Invoke-psake -buildFile "$env:BHProjectPath\psake.ps1" @BuildOpts
-exit ( [int]( -not $psake.build_success ) )
+# Everything else should be in PSAke
+Invoke-PSAke -buildFile "$env:BHProjectPath\psake.ps1" @BuildOpts
+Exit ( [int]( -not $psake.build_success ) )
