@@ -83,9 +83,11 @@ Task Build -depends Test {
 
 	# Set the Prerelease string, or remove
 	Write-Output "`tPrerelease Metadata"
-	If ($env:BHBranchName -eq 'master') {
+	If ($env:BHBranchName -eq 'release') {
+		# Remove "Prerelease" from Manifest
 		Set-Content -Path $env:BHPSModuleManifest -Value (Get-Content -Path $env:BHPSModuleManifest | Select-String -Pattern 'Prerelease' -NotMatch)
 	} else {
+		# Add/Update Prerelease Version
 		Update-Metadata -Path $env:BHPSModuleManifest -PropertyName Prerelease -Value "PRE$(($env:BHCommitHash).Substring(0,7))"
 	}
 
