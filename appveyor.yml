@@ -1,4 +1,4 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.4 2020-06-11T15:29:43.151Z
+#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.7 2020-10-12 14:01:35
 # See http://www.appveyor.com/docs/appveyor-yml for many more options
 
 # Version number format
@@ -7,7 +7,7 @@ version: '{build}'
 # Limit the GIT Branches
 branches:
   only:
-  - master
+  - release
   - devel
 clone_depth: 1
 
