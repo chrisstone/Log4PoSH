@@ -30,7 +30,7 @@ function Set-LoggerConfigBasic {
 	)
 
 	Process {
-		if ($null -eq $Appender -and $null -eq $Repository) {
+		if (($null -eq $Appender) -and ($null -eq $Repository)) {
 			[log4net.Config.BasicConfigurator]::Configure()
 		} elseif ($null -eq $Appender) {
 			[log4net.Config.BasicConfigurator]::Configure($Repository)

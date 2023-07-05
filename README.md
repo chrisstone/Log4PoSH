@@ -21,10 +21,44 @@ Use `-AllowPrerelease` to install 'devel' versions (expect bugs).
 
 ```powershell
 Import-Module -Name Log4PoSH
-Import-LoggerConfig -Basic
-$Log = New-Logger
+Initialize-Logger
+$Log = Get-Logger
 $Log.Debug("Hello World")
+```
 
+Note that since there are no appenders, the messages do not have anywhere to go.
+
+### Quick Start - To a File
+
+```powershell
+Import-Module -Name Log4PoSH
+Initialize-Logger
+$Layout = New-LoggerLayoutPattern -ConversionPattern '[%date{yyyy-MM-dd HH:mm:ss}] [%level] %message%n'
+$FileApp = New-LoggerAppenderFile -FileName 'C:\Full\Path\To\my.log' -Layout $Layout
+Set-LoggerConfigBasic -Appender $FileApp
+$Log = Get-Logger
+$Log.Info('This is informative');
+```
+
+### Quick Start - To the Console
+
+```powershell
+Import-Module -Name Log4PoSH
+Initialize-Logger
+$Layout = New-LoggerLayoutPattern -ConversionPattern '[%date{yyyy-MM-dd HH:mm:ss}] [%level] %message%n'
+$ConsApp = New-LoggerAppenderConsole -Layout $Layout
+Set-LoggerConfigBasic -Appender $ConsApp
+$Log = Get-Logger
+$Log.Error('No Error');
+```
+
+### Quick Start - Multiple Appenders
+
+```powershell
+... As above
+Set-LoggerConfigBasic -Appender $FileApp, $ConsApp
+$Log = Get-Logger
+$Log.Warn('Too Many Logs, said nobody fixing buggy code')
 ```
 
 ## Release History
@@ -41,7 +75,7 @@ TODO Documentation
 ## Contributing
 
 1. Fork it (<https://github.com/chrisstone/Log4PoSH/fork>)
-2. Create your branch (`git checkout -b feature/fooBar`)
+2. Create a branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request

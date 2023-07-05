@@ -21,6 +21,11 @@ This function is part of the Logging module. It requires the log4net library to 
 #>
 function New-LoggerAppenderConsoleColored {
 	Param (
+		[Parameter(Mandatory = $true)]
+		[log4net.Layout.ILayout]							$Layout,
+
+		[log4net.Core.Level]								$Threshold,
+
 		[Parameter(Mandatory = $false)]
 		[hashtable] $LevelColors,
 
@@ -29,11 +34,13 @@ function New-LoggerAppenderConsoleColored {
 		[string] $Target = "Console.Out"
 	)
 
-	# Create a new ColoredConsoleAppender
 	$coloredConsoleAppender = New-Object log4net.Appender.ColoredConsoleAppender
-
-	# Set the target
 	$coloredConsoleAppender.Target = $Target
+	$coloredConsoleAppender.Layout = $Layout
+
+	if ($null -ne $Threshold) {
+		$coloredConsoleAppender.Threshold = $Threshold
+	}
 
 	# Add mappings
 	if ($null -ne $LevelColors) {

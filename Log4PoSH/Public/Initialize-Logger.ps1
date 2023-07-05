@@ -32,8 +32,8 @@ function Initialize-Logger {
 			HelpMessage = "Path to the log4net.dll file."
 		)]
 		[ValidateScript({ Test-Path $_ -and (Split-Path $_ -Leaf) -eq "log4net.dll" })]
-		[string] $DllPath = (Join-Path $PSScriptRoot ("\..\Log4PoSH\lib\{0}\log4net.dll" -f
-				$(if ($PSVersionTable.CLRVersion) {
+		[string] $DllPath = (Join-Path $PSScriptRoot ("..\lib\{0}\log4net.dll" -f
+				$(if ($null -ne $PSVersionTable.CLRVersion) {
 						("net" -f $PSVersionTable.CLRVersion.ToString(2))
 					} else {
 						'netstandard2.0'

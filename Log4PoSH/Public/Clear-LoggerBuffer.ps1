@@ -9,9 +9,6 @@ This function invokes the flush method of log4net's LogManager to clear any pend
 Clear-LoggerBuffer
 
 This command will clear the logger buffer. Any error will be thrown and needs to be caught by the calling context.
-
-.NOTES
-This function is part of the Logging module.
 #>
 
 function Clear-LoggerBuffer {

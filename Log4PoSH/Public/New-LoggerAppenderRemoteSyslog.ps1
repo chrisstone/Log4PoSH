@@ -21,25 +21,27 @@ This function is part of the Logging module. It requires the log4net library to 
 #>
 function New-LoggerAppenderRemoteSyslog {
 	Param (
-		[Parameter(Mandatory = $false)]
+		[Parameter(Mandatory = $true)]
 		[ValidateSet("KERN", "USER", "MAIL", "DAEMON", "AUTH", "SYSLOG", "LPR", "NEWS", "UUCP", "CRON", "AUTHPRIV", "FTP", "NTP", "AUDIT", "ALERT", "CLOCK", "LOCAL0", "LOCAL1", "LOCAL2", "LOCAL3", "LOCAL4", "LOCAL5", "LOCAL6", "LOCAL7")]
 		[string] $Facility,
 
-		[Parameter(Mandatory = $false)]
-		[string] $Identity
+		[Parameter(Mandatory = $true)]
+		[string] $Identity,
+
+		[Parameter(Mandatory = $true)]
+		[log4net.Layout.ILayout]							$Layout,
+
+		[log4net.Core.Level]								$Threshold
 	)
 
 	# Create a new RemoteSyslogAppender
 	$remoteSyslogAppender = New-Object log4net.Appender.RemoteSyslogAppender
+	$remoteSyslogAppender.Facility = $Facility
+	$remoteSyslogAppender.Identity = $Identity
+	$remoteSyslogAppender.Layout = $Layout
 
-	# Set the Facility
-	if ($null -ne $Facility) {
-		$remoteSyslogAppender.Facility = $Facility
-	}
-
-	# Set the Identity
-	if ($null -ne $Identity) {
-		$remoteSyslogAppender.Identity = $Identity
+	if ($null -ne $Threshold) {
+		$remoteSyslogAppender.Threshold = $Threshold
 	}
 
 	return $remoteSyslogAppender

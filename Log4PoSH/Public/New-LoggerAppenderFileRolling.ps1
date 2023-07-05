@@ -37,26 +37,25 @@ This function is part of the Logging module. It requires the log4net library to 
 function New-LoggerAppenderFileRolling {
 	Param (
 		[Parameter(Mandatory = $true)]
-		[string] $FileName,
+		[string]											$FileName,
+		[Parameter(Mandatory = $true)]
+		[log4net.Layout.ILayout]							$Layout,
 
 		[Parameter(Mandatory = $false)]
-		[int] $CountDirection,
-
+		[log4net.Core.Level]								$Threshold,
 		[Parameter(Mandatory = $false)]
-		[string] $DatePattern,
-
+		[int]												$CountDirection,
 		[Parameter(Mandatory = $false)]
-		[string] $DateTimeStrategy,
-
+		[string]											$DatePattern,
 		[Parameter(Mandatory = $false)]
-		[string] $MaxFileSize,
-
+		[string]											$DateTimeStrategy,
 		[Parameter(Mandatory = $false)]
-		[int] $MaxSizeRollBackups,
-
+		[string]											$MaxFileSize,
+		[Parameter(Mandatory = $false)]
+		[int]												$MaxSizeRollBackups,
 		[Parameter(Mandatory = $false)]
 		[ValidateSet("Composite", "Once", "Size", "Date")]
-		[string] $RollingStyle
+		[string]											$RollingStyle
 	)
 
 	# Create a new RollingFileAppender
@@ -64,6 +63,11 @@ function New-LoggerAppenderFileRolling {
 
 	# Set the file name
 	$rollingFileAppender.File = $FileName
+	$rollingFileAppender.Layout = $Layout
+
+	if ($null -ne $Threshold) {
+		$rollingFileAppender.Threshold = $Threshold
+	}
 
 	# Set the CountDirection
 	if ($null -ne $CountDirection) {

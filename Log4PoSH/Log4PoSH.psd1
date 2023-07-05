@@ -7,7 +7,7 @@
 	Author            = 'Chris Stone <Chris@StoneyForest.net>'
 	CompanyName       = ''
 
-	Copyright         = '(c) 2023 Chris Stone <Chris@Stoneyforest.net>. All rights reserved.'
+	Copyright         = '(c) 2023 Chris Stone <Chris@StoneyForest.net>. All rights reserved.'
 	Description       = 'Log4Net Powershell Wrapper Module'
 	PowerShellVersion = '2.0'
 

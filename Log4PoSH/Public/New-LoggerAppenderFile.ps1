@@ -31,15 +31,19 @@ This function is part of the Logging module. It requires the log4net library to 
 function New-LoggerAppenderFile {
 	Param (
 		[Parameter(Mandatory = $true)]
-		[string] $FileName,
+		[string]											$FileName,
+		[Parameter(Mandatory = $true)]
+		[log4net.Layout.ILayout]							$Layout,
+
+		[log4net.Core.Level]								$Threshold,
 		[Parameter(Mandatory = $false)]
-		[bool] $AppendToFile = $true,
+		[bool]												$AppendToFile = $true,
 		[Parameter(Mandatory = $false)]
-		[System.Text.Encoding] $Encoding,
+		[System.Text.Encoding]								$Encoding,
 		[Parameter(Mandatory = $false)]
-		[log4net.Appender.FileAppender+LockingModelBase] $LockingModel,
+		[log4net.Appender.FileAppender+LockingModelBase]	$LockingModel,
 		[Parameter(Mandatory = $false)]
-		[log4net.Util.SecurityContext] $SecurityContext
+		[log4net.Core.SecurityContext]						$SecurityContext
 	)
 
 	# Create a new FileAppender
@@ -48,6 +52,11 @@ function New-LoggerAppenderFile {
 	# Set the properties
 	$fileAppender.File = $FileName
 	$fileAppender.AppendToFile = $AppendToFile
+	$fileAppender.Layout = $Layout
+
+	if ($null -ne $Threshold) {
+		$fileAppender.Threshold = $Threshold
+	}
 
 	if ($null -ne $Encoding) {
 		$fileAppender.Encoding = $Encoding
