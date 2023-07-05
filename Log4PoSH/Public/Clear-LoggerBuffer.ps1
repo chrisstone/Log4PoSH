@@ -1,8 +1,23 @@
-#### By Chris Stone <chris.stone@nuwavepartners.com> v0.0.53 2020-06-11T19:33:04.761Z
+<#
+.SYNOPSIS
+This function is used to clear the buffer of the logger.
 
+.DESCRIPTION
+This function invokes the flush method of log4net's LogManager to clear any pending logging information in the buffer.
+
+.EXAMPLE
+Clear-LoggerBuffer
+
+This command will clear the logger buffer. Any error will be thrown and needs to be caught by the calling context.
+
+.NOTES
+This function is part of the Logging module.
+#>
 
 function Clear-LoggerBuffer {
-	Return !([log4net.LogManager]::Flush())
-}
+	[CmdletBinding()]
+	param()
 
+	return -not ([log4net.LogManager]::Flush())
+}
 Export-ModuleMember -Function Clear-LoggerBuffer

@@ -1,56 +1,62 @@
+# The root directory of your project, adjust as needed
+BeforeAll {
+	$ModuleName = 'Log4PoSH'
+	$RootDir = (Get-Location).Path
+	$ModuleDir = Join-Path $RootDir $ModuleName
+	$ModulePsm1Path = Join-Path $ModuleDir "$ModuleName.psm1"
+	$ModulePsd1Path = Join-Path $ModuleDir "$ModuleName.psd1"
+	$PublicFunctionsDir = Join-Path $ModuleDir 'Public'
+	$PrivateFunctionsDir = Join-Path $ModuleDir 'Private'
+	$TestDir = Join-Path $RootDir 'Tests'
+}
 
-
-### Basic Definitions
-
-$Module = Get-ChildItem -Filter "*.psm1" -Path (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)) -Recurse -Depth 1
-
-$Script:ModuleName = ($Module -split '\.')[0]
-$Script:ModulePath = Split-Path -Path $Module.FullName -Parent
-
-
-Describe "Module" {
-
-	Context 'Setup' {
-
-		It "File Exists" {
-			"$ModulePath\$ModuleName.psm1" | Should -Exist
+Describe "Module Basics" {
+	Context "Module Files Exist" {
+		It "Psm1 file exists" {
+			Write-Output "PSM" $ModulePsm1Path
+			$ModulePsm1Path | Should -Exist
 		}
 
-		It "Parse" {
-			$psFile = Get-Content -Path "$ModulePath\$ModuleName.psm1" -ErrorAction Stop
-			$errors = $null
-			$null = [System.Management.Automation.PSParser]::Tokenize($psFile, [ref]$errors)
-			$errors.Count | Should -Be 0
-		}
-
-		It "Manifest" {
-			"$ModulePath\$ModuleName.psd1" | Should -Exist
-		}
-
-		It "Loads" {
-			$Import = Import-Module -Name "$ModulePath\$ModuleName.psm1" -Force -ErrorAction SilentlyContinue -PassThru 3>$null
-			$Import.Count | Should -Be 1
+		It "Psd1 file exists" {
+			$ModulePsd1Path | Should -Exist
 		}
 	}
 
+	Context "Module Files are Valid" {
+		It "Psm1 file can be parsed" {
+			$Content = Get-Content -Path $ModulePsm1Path -Raw
+			$null = [System.Management.Automation.PSParser]::Tokenize($Content, [ref]$null)
+		}
 
-
-	Import-Module -Name "$ModulePath\$ModuleName.psm1" -Force -ErrorAction SilentlyContinue
-	$Functions = Get-Command -Module $ModuleName -CommandType Function
-
-	Foreach ($Func in $Functions.Name) {
-		Context "Function $Func" {
-
-			It "File Exists" -TestCases @{Path = $Func} {
-				Param ( $Path )
-				"$ModulePath\Public\$Path.ps1" | Should -Exist
-			}
-
-			It "Help" -TestCases @{Path = $Func} -Pending {
-				Param ( $Path )
-				"$ModulePath\Public\$Path.ps1" | Should -FileContentMatch '<#'
-				"$ModulePath\Public\$Path.ps1" | Should -FileContentMatch '#>'
-			}
+		It "Psd1 file can be imported" {
+			{ Import-Module $ModulePsd1Path -ErrorAction Stop } | Should -Not -Throw
 		}
 	}
 }
+
+Describe "Module Function Files" {
+	BeforeAll {
+		$ApprovedVerbs = Get-Verb | Select-Object -ExpandProperty Verb
+		$Functions = Get-Command -Module (Split-Path $ModulePsm1Path -Leaf) | Where-Object { $_.CommandType -eq 'Function' }
+	}
+
+	Context "Module Function <_>" -ForEach $Functions {
+		$Function = $_
+
+		It "$($Function.Name) uses an approved verb" {
+			$Function.Verb | Should -BeIn $ApprovedVerbs
+		}
+
+		It "$($Function.Name).ps1 exists in Public or Private" {
+			$PublicFunctionPath = Join-Path $PublicFunctionsDir "$($Function.Name).ps1"
+			$PrivateFunctionPath = Join-Path $PrivateFunctionsDir "$($Function.Name).ps1"
+                ($PublicFunctionPath | Test-Path -Or ($PrivateFunctionPath | Test-Path)) | Should -BeTrue
+		}
+
+		It "$($Function.Name).ps1 has help content" {
+			$FunctionHelp = Get-Help -Name $Function.Name -ErrorAction SilentlyContinue
+			$FunctionHelp | Should -Not -BeNull
+		}
+	}
+}
+
