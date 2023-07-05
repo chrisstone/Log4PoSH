@@ -19,16 +19,7 @@ Use `-AllowPrerelease` to install 'devel' versions (expect bugs).
 
 ## Quick Start
 
-```powershell
-Import-Module -Name Log4PoSH
-Initialize-Logger
-$Log = Get-Logger
-$Log.Debug("Hello World")
-```
-
-Note that since there are no appenders, the messages do not have anywhere to go.
-
-### Quick Start - To a File
+### To a File
 
 ```powershell
 Import-Module -Name Log4PoSH
@@ -40,7 +31,7 @@ $Log = Get-Logger
 $Log.Info('This is informative');
 ```
 
-### Quick Start - To the Console
+### To the Console
 
 ```powershell
 Import-Module -Name Log4PoSH
@@ -52,7 +43,7 @@ $Log = Get-Logger
 $Log.Error('No Error');
 ```
 
-### Quick Start - Multiple Appenders
+### Multiple Appenders
 
 ```powershell
 ... As above
@@ -78,7 +69,7 @@ TODO Documentation
 2. Create a branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+5. Create a new Pull Request (https://github.com/chrisstone/Log4PoSH/compare)
 
 Branches
 
