@@ -8,7 +8,7 @@ Describe 'New-LoggerAppenderConsole' {
 
 	Context 'When the function is called' {
 		BeforeAll {
-			$result = New-LoggerAppenderConsole
+			$result = New-LoggerAppenderConsole -Layout (New-LoggerLayoutPattern -ConversionPattern '[%date{yyyy-MM-dd HH:mm:ss.fff}] [%level] %message%n')
 		}
 
 		It 'Returns an object of the correct type' {
@@ -19,8 +19,8 @@ Describe 'New-LoggerAppenderConsole' {
 			$result.Target | Should -Be 'Console.Out'
 		}
 
-		It 'Has Layout set to null' {
-			$result.Layout | Should -BeNullOrEmpty
+		It 'Has a Layout' {
+			$result.Layout | Should -Not -BeNullOrEmpty
 		}
 	}
 }

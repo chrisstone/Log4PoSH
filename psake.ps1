@@ -19,11 +19,11 @@ Properties {
 
 TaskSetup {
 
-	Write-Output "".PadRight(70,'-')
+	Write-Output "".PadRight(70, '-')
 
 }
 
-Task Default -depends Test
+Task Default -depends GenerateDocs
 
 Task Init {
 
@@ -33,7 +33,7 @@ Task Init {
 
 }
 
-Task Test -depends Init  {
+Task Test -depends Init {
 
 	# Testing links on github requires >= tls 1.2
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -41,13 +41,13 @@ Task Test -depends Init  {
 	# Gather test results. Store them in a variable and file
 	Import-Module Pester
 	$PesterConf = [PesterConfiguration]@{
-		Run = @{
-			Path = "$ProjectRoot\Tests"
+		Run        = @{
+			Path     = "$ProjectRoot\Tests"
 			PassThru = $true
 		}
 		TestResult = @{
-			Enabled = $true
-			OutputPath = ("{0}\TestResult_{1}.xml" -f $ProjectRoot, $TimeStamp)
+			Enabled      = $true
+			OutputPath   = ("{0}\TestResult_{1}.xml" -f $ProjectRoot, $TimeStamp)
 			OutputFormat = "NUnitXml"
 		}
 	}
@@ -69,6 +69,13 @@ Task Test -depends Init  {
 		Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
 	}
 
+}
+
+Task GenerateDocs -depends Test {
+	Import-Module $env:BHPSModuleManifest
+	New-MarkdownHelp -Module $env:BHProjectName -OutputFolder '.\docs'
+
+	#$Null = New-ExternalHelp -OutputPath 'out/docs/PSDocs' -Path '.\docs\commands\PSDocs\en-US','.\docs\keywords\PSDocs\en-US', '.\docs\concepts\PSDocs\en-US' -Force;
 }
 
 Task Build -depends Test {
@@ -94,18 +101,18 @@ Task Build -depends Test {
 	# Set build number in manifest
 	Write-Output "`tVersion Build"
 	[Version] $Ver = Get-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion'
-	Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value (@($Ver.Major,$Ver.Minor,$Env:BHBuildNumber) -join '.')
+	Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value (@($Ver.Major, $Ver.Minor, $Env:BHBuildNumber) -join '.')
 
 }
 
 Task Deploy -depends Build {
 
 	$Params = @{
-		Path = "$ProjectRoot"
-		Force = $true
+		Path    = "$ProjectRoot"
+		Force   = $true
 		Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
 	}
 	Write-Output "Invoking PSDeploy"
-	Invoke-PSDeploy @Verbose @Params
+	# Invoke-PSDeploy @Verbose @Params
 
 }

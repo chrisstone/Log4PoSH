@@ -31,7 +31,7 @@ function Resolve-Module {
 				}
 			} else {
 				Write-Output "`tMissing, installing Module"
-				Install-Module -Name $ModuleName -Force
+				Install-Module -Name $ModuleName -Force -AllowClobber
 				Import-Module -Name $ModuleName -Force -RequiredVersion $Version
 			}
 		}
@@ -43,7 +43,7 @@ Write-Output ("`n{0} started " -f $MyInvocation.MyCommand.Name ).PadRight(70,'-'
 # Grab nuget, PSGallery, install modules
 Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
-Resolve-Module -Name Psake, PSDeploy, Pester, BuildHelpers
+Resolve-Module -Name Psake, Pester, BuildHelpers, platyPS	# PSDeploy (YAML conflicts with platyPS)
 
 # From BuildHelpers
 Set-BuildEnvironment -Force
